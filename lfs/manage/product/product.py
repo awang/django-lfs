@@ -31,12 +31,11 @@ from lfs.catalog.settings import PRODUCT_TYPE_FORM_CHOICES
 from lfs.catalog.settings import VARIANT
 from lfs.core.utils import LazyEncoder
 from lfs.manage.product.images import manage_images
+from lfs.manage.product.seo import manage_seo
 from lfs.manage.product.properties import manage_properties
 from lfs.manage.product.attachments import manage_attachments
-from lfs.manage.product.seo import SEOForm
 from lfs.manage.views.lfs_portlets import portlets_inline
 from lfs.manage.utils import get_current_page
-from lfs.manage.seo.views import SEOView
 from lfs.manufacturer.models import Manufacturer
 from lfs.utils.widgets import SelectImage
 
@@ -159,7 +158,7 @@ class ProductStockForm(forms.ModelForm):
         return self.cleaned_data
 
 
-@permission_required("core.manage_shop")
+@permission_required("core.manage_shop", login_url="/login/")
 def manage_product(request, product_id, template_name="manage/product/product.html"):
     """
     Displays the whole manage/edit form for the product with the passed id.
@@ -183,7 +182,7 @@ def manage_product(request, product_id, template_name="manage/product/product.ht
         "images": manage_images(request, product_id, as_string=True),
         "attachments": manage_attachments(request, product_id, as_string=True),
         "selectable_products": selectable_products_inline(request, page, paginator, product.id),
-        "seo": SEOView(Product, form_klass=SEOForm, template_name='manage/product/seo.html').render(request, product),
+        "seo": manage_seo(request, product_id),
         "stock": stock(request, product_id),
         "portlets": portlets_inline(request, product),
         "properties": manage_properties(request, product_id),
@@ -192,7 +191,7 @@ def manage_product(request, product_id, template_name="manage/product/product.ht
     }))
 
 
-@permission_required("core.manage_shop")
+@permission_required("core.manage_shop", login_url="/login/")
 def no_products(request, template_name="manage/product/no_products.html"):
     """Displays that there are no products
     """
@@ -200,7 +199,7 @@ def no_products(request, template_name="manage/product/no_products.html"):
 
 
 # Tabs
-@permission_required("core.manage_shop")
+@permission_required("core.manage_shop", login_url="/login/")
 def stock(request, product_id, template_name="manage/product/stock.html"):
     """
     Displays and updates product's stock data.
@@ -243,7 +242,7 @@ def stock(request, product_id, template_name="manage/product/stock.html"):
         return result
 
 
-@permission_required("core.manage_shop")
+@permission_required("core.manage_shop", login_url="/login/")
 def product_data_form(request, product_id, template_name="manage/product/data.html"):
     """
     Displays the product master data form within the manage product view.
@@ -262,7 +261,7 @@ def product_data_form(request, product_id, template_name="manage/product/data.ht
     }))
 
 
-@permission_required("core.manage_shop")
+@permission_required("core.manage_shop", login_url="/login/")
 def products(request, template_name="manage/product/products.html"):
     """
     Displays an overview list of all products.
@@ -280,7 +279,7 @@ def products(request, template_name="manage/product/products.html"):
 
 
 # Parts
-@permission_required("core.manage_shop")
+@permission_required("core.manage_shop", login_url="/login/")
 def products_inline(request, page, paginator, template_name="manage/product/products_inline.html"):
     """
     Displays the list of products.
@@ -291,7 +290,7 @@ def products_inline(request, page, paginator, template_name="manage/product/prod
     }))
 
 
-@permission_required("core.manage_shop")
+@permission_required("core.manage_shop", login_url="/login/")
 def product_filters_inline(request, page, paginator, product_id=0, template_name="manage/product/product_filters_inline.html"):
     """
     Displays the filter section of the product overview view.
@@ -325,7 +324,7 @@ def product_filters_inline(request, page, paginator, product_id=0, template_name
     }))
 
 
-@permission_required("core.manage_shop")
+@permission_required("core.manage_shop", login_url="/login/")
 def pages_inline(request, page, paginator, product_id, template_name="manage/product/pages_inline.html"):
     """
     Displays the page navigation.
@@ -337,7 +336,7 @@ def pages_inline(request, page, paginator, product_id, template_name="manage/pro
     }))
 
 
-@permission_required("core.manage_shop")
+@permission_required("core.manage_shop", login_url="/login/")
 def selectable_products_inline(request, page, paginator, product_id, template_name="manage/product/selectable_products_inline.html"):
     """
     Displays the selectable products for the product view.
@@ -361,7 +360,7 @@ def selectable_products_inline(request, page, paginator, product_id, template_na
 
 
 # Actions
-@permission_required("core.manage_shop")
+@permission_required("core.manage_shop", login_url="/login/")
 def add_product(request, template_name="manage/product/add_product.html"):
     """Shows a simplified product form and adds a new product.
     """
@@ -380,7 +379,7 @@ def add_product(request, template_name="manage/product/add_product.html"):
     }))
 
 
-@permission_required("core.manage_shop")
+@permission_required("core.manage_shop", login_url="/login/")
 def change_subtype(request, product_id):
     """Changes the sub type of the product with passed id.
     """
@@ -394,7 +393,7 @@ def change_subtype(request, product_id):
     )
 
 
-@permission_required("core.manage_shop")
+@permission_required("core.manage_shop", login_url="/login/")
 @require_POST
 def delete_product(request, product_id):
     """Deletes product with passed id.
@@ -406,7 +405,7 @@ def delete_product(request, product_id):
     return HttpResponseRedirect(url)
 
 
-@permission_required("core.manage_shop")
+@permission_required("core.manage_shop", login_url="/login/")
 @require_POST
 def edit_product_data(request, product_id, template_name="manage/product/data.html"):
     """Edits the product with given.
@@ -459,7 +458,7 @@ def edit_product_data(request, product_id, template_name="manage/product/data.ht
     return HttpResponse(result)
 
 
-@permission_required("core.manage_shop")
+@permission_required("core.manage_shop", login_url="/login/")
 def product_dispatcher(request):
     """
     Dispatches to the first product. This is called when the shop admin
@@ -474,7 +473,7 @@ def product_dispatcher(request):
     return HttpResponseRedirect(url)
 
 
-@permission_required("core.manage_shop")
+@permission_required("core.manage_shop", login_url="/login/")
 def reset_filters(request):
     """
     Resets all product filters.
@@ -500,7 +499,7 @@ def reset_filters(request):
     return HttpResponse(result)
 
 
-@permission_required("core.manage_shop")
+@permission_required("core.manage_shop", login_url="/login/")
 @require_POST
 def save_products(request):
     """
@@ -575,7 +574,7 @@ def save_products(request):
     return HttpResponse(result)
 
 
-@permission_required("core.manage_shop")
+@permission_required("core.manage_shop", login_url="/login/")
 def set_name_filter(request):
     """
     Sets product filters given by passed request.
@@ -609,7 +608,7 @@ def set_name_filter(request):
     return HttpResponse(result)
 
 
-@permission_required("core.manage_shop")
+@permission_required("core.manage_shop", login_url="/login/")
 def set_filters(request):
     """
     Sets product filters given by passed request.
@@ -651,7 +650,7 @@ def set_filters(request):
     return HttpResponse(result)
 
 
-@permission_required("core.manage_shop")
+@permission_required("core.manage_shop", login_url="/login/")
 def set_products_page(request):
     """
     Sets the displayed product page.
@@ -680,14 +679,14 @@ def set_products_page(request):
         simplejson.dumps({"html": html}, cls=LazyEncoder))
 
 
-@permission_required("core.manage_shop")
+@permission_required("core.manage_shop", login_url="/login/")
 def product_by_id(request, product_id):
     """
     Little helper which returns a product by id. (For the shop customer the
     products are displayed by slug, for the manager by id).
     """
     product = Product.objects.get(pk=product_id)
-    url = reverse("lfs_product", kwargs={"slug": product.slug})
+    url = reverse("lfs.catalog.views.product_view", kwargs={"slug": product.slug})
     return HttpResponseRedirect(url)
 
 
